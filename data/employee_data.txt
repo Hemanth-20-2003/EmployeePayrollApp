@@ -1,0 +1,6 @@
+Employee ID : EMP-1234
+Name        : HEMANTH
+Email       : HEMAN@GMAIL.COM
+Phone       : 7867890987
+Username    : HEMANTH
+=================================

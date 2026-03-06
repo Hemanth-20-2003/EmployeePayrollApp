@@ -1,5 +1,13 @@
 package com.employeepayrollapp.main;
 
+import com.employeepayrollapp.exception.ValidationException;
+import com.employeepayrollapp.model.Employee;
+import com.employeepayrollapp.model.RegularEmployee;
+import com.employeepayrollapp.model.Session;
+import com.employeepayrollapp.model.UserAccount;
+import com.employeepayrollapp.service.AuthenticationService;
+import com.employeepayrollapp.validation.Validator;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Scanner;
@@ -14,10 +22,20 @@ import com.employeepayrollapp.validation.Validator;
  * Main runner class that manages input, validation, object creation, and data persistence.
  * @author Developer
  * @version 1.0
+=======
+/**
+ * EmployeePayrollApp
+ * Main runner class for the application.
+ * Features an interactive loop, advanced switch routing, and role-based dashboard menus.
+ *
+ * @author Developer
+ * @version 2.0
+>>>>>>> feature/UC2-EmployeePayrollApp
  */
 public class EmployeePayrollApp {
 
     /**
+<<<<<<< HEAD
      * Main entry point for the application.
      */
     public static void main(String[] args) {
@@ -28,6 +46,47 @@ public class EmployeePayrollApp {
 
         System.out.println("=== EMPLOYEE REGISTRATION ===");
 
+=======
+     * The main entry point for the application.
+     */
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        new File("data").mkdirs();
+        
+        AuthenticationService authService = new AuthenticationService();
+        boolean running = true;
+        
+        while (running) {
+            System.out.println("\n=== EMPLOYEE PAYROLL SYSTEM ===");
+            System.out.println("1. Register New Employee");
+            System.out.println("2. Login");
+            System.out.println("3. Exit");
+            System.out.print("Select an option: ");
+            
+            String choice = sc.nextLine();
+            
+            switch (choice) {
+                case "1" -> handleRegistration(sc, authService);
+                case "2" -> handleLogin(sc, authService);
+                case "3" -> {
+                    System.out.println("Exiting System...");
+                    running = false;
+                }
+                default -> System.out.println("Invalid choice. Please try again.");
+            }
+        }
+        sc.close();
+    }
+
+    /**
+     * Handles the Employee Registration logic.
+     *
+     * @param sc The scanner instance
+     * @param authService The authentication service to register the new user's credentials
+     */
+    private static void handleRegistration(Scanner sc, AuthenticationService authService) {
+        System.out.println("\n=== EMPLOYEE REGISTRATION ===");
+>>>>>>> feature/UC2-EmployeePayrollApp
         try {
             System.out.print("Enter Employee ID (EMP-XXXX): ");
             String empId = sc.nextLine();
@@ -50,6 +109,7 @@ public class EmployeePayrollApp {
             System.out.print("Create Password: ");
             String password = sc.nextLine();
 
+<<<<<<< HEAD
             // Create objects after successful validation
             UserAccount account = new UserAccount(username, password);
             Employee employee = new Employee(empId, name, email, phone, account);
@@ -61,13 +121,73 @@ public class EmployeePayrollApp {
             System.out.println("\nEmployee Registered Successfully:");
             System.out.println(employee);
             System.out.println("Data persisted in file: employee_data.txt");
+=======
+            UserAccount account = new UserAccount(username, password);
+            Employee employee = new Employee(empId, name, email, phone, account);
+            employee.persist();
+
+            authService.registerUser(new RegularEmployee(username, password));
+
+            System.out.println("\nEmployee Registered Successfully:");
+            System.out.println(employee);
+>>>>>>> feature/UC2-EmployeePayrollApp
 
         } catch (ValidationException e) {
             System.out.println("\nValidation Failed: " + e.getMessage());
         } catch (IOException e) {
             System.out.println("\nError saving employee data: " + e.getMessage());
+<<<<<<< HEAD
         } finally {
             sc.close();
+=======
+        }
+    }
+
+    /**
+     * Handles the Employee Login logic and displays an interactive dashboard menu.
+     *
+     * @param sc The scanner instance
+     * @param authService The authentication service
+     */
+    private static void handleLogin(Scanner sc, AuthenticationService authService) {
+        Session session = authService.login(sc);
+        
+        if (session != null) {
+            boolean loggedIn = true;
+            
+            while (loggedIn && !session.isExpired()) {
+                System.out.println("\n======= " + session.getRole() + " DASHBOARD =======");
+                
+                switch (session.getRole()) {
+                    case "MANAGER" -> {
+                        System.out.println("1. Approve Payroll");
+                        System.out.println("2. View Reports");
+                        System.out.println("3. Log Out");
+                    }
+                    default -> {
+                        System.out.println("1. View Payslip");
+                        System.out.println("2. Update Profile");
+                        System.out.println("3. Log Out");
+                    }
+                }
+                System.out.print("Select an option: ");
+                
+                String choice = sc.nextLine();
+                
+                switch (choice) {
+                    case "1", "2" -> System.out.println("\nFeature coming soon...");
+                    case "3" -> {
+                        System.out.println("\nLogged out successfully.");
+                        loggedIn = false;
+                    }
+                    default -> System.out.println("\nInvalid choice. Please try again.");
+                }
+            }
+            
+            if (session.isExpired()) {
+                System.out.println("\nSession has expired. Please log in again.");
+            }
+>>>>>>> feature/UC2-EmployeePayrollApp
         }
     }
 }
